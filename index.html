@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Imker-Trainer</title>
+  <meta name="description" content="Lernwerkzeug für den Jungimkerwettbewerb: Fragen aus den Theorietests mit Erklärungen, Karteikasten zum Wiederholen, Testgenerator und Fragenkatalog.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2l12 7v14l-12 7-12-7V9z' fill='%23d4901c'/%3E%3Cpath d='M16 9l6 3.5v7L16 23l-6-3.5v-7z' fill='%23fff3d6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Zum Inhalt</a>
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="#start" aria-label="Imker-Trainer – Start">
+        <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2l12 7v14l-12 7-12-7V9z"/><path class="brand__inner" d="M16 9l6 3.5v7L16 23l-6-3.5v-7z"/></svg>
+        <span>Imker-Trainer</span>
+      </a>
+      <nav class="tabs" aria-label="Bereiche">
+        <a href="#start" data-tab="start">Start</a>
+        <a href="#lernen" data-tab="lernen">Karteikasten</a>
+        <a href="#test" data-tab="test">Test</a>
+        <a href="#fragen" data-tab="fragen">Alle Fragen</a>
+        <a href="#fortschritt" data-tab="fortschritt">Fortschritt</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+    <p class="storage-warning" id="storage-warning" hidden>Dein Browser lässt hier keine Speicherung zu (z. B. im privaten Modus). Du kannst trotzdem lernen – sichere deinen Fortschritt bei Bedarf unter „Fortschritt“ als Datei.</p>
+
+    <!-- ============ START ============ -->
+    <section class="view" data-view="start" aria-labelledby="start-title">
+      <div class="hero">
+        <p class="eyebrow">Jungimkerwettbewerb · Theorie</p>
+        <h1 id="start-title">Lernen, bis jede Frage sitzt</h1>
+        <p class="lead" id="start-lead"></p>
+      </div>
+
+      <div class="action-grid">
+        <article class="action">
+          <h2 class="action__title">Karteikasten</h2>
+          <p class="action__text" id="start-due"></p>
+          <a class="button button--primary" href="#lernen">Weiterlernen</a>
+        </article>
+        <article class="action">
+          <h2 class="action__title">Test erstellen</h2>
+          <p class="action__text">Stell dir einen Test zusammen – nach Thema, Wettbewerb oder deinen Schwachstellen – und bekomm zu jeder Frage die Erklärung.</p>
+          <a class="button" href="#test">Zum Testgenerator</a>
+        </article>
+        <article class="action">
+          <h2 class="action__title">Markiert &amp; schwierig</h2>
+          <p class="action__text" id="start-hard"></p>
+          <button class="button" type="button" id="start-hard-btn">Diese üben</button>
+        </article>
+      </div>
+
+      <div class="card">
+        <h2 class="card__title">Dein Karteikasten</h2>
+        <div id="start-boxes"></div>
+        <details class="explain">
+          <summary>So funktioniert der Karteikasten</summary>
+          <p>Jede Frage wandert durch fünf Fächer. Neue Fragen starten in Fach 1. Beantwortest du eine Frage richtig, rückt sie ein Fach weiter und kommt erst später wieder dran (Fach 2 nach einem Tag, Fach 3 nach drei Tagen, Fach 4 nach einer Woche, Fach 5 nach drei Wochen). Beantwortest du sie falsch, fällt sie zurück in Fach 1 und wird in derselben Lerneinheit noch einmal abgefragt, bis du sie kannst.</p>
+          <p>So übst du schwierige Fragen oft und leichte selten. Mit dem Stern markierst du Fragen, die du gezielt wiederholen willst.</p>
+        </details>
+      </div>
+
+      <div class="card">
+        <h2 class="card__title">Woher die Fragen kommen</h2>
+        <ul class="source-list" id="start-sources"></ul>
+        <p class="hint">Wo ein Lösungsbogen aus der Mappe fachlich falsch war, steht bei der Frage ein Hinweis. Antworten im Wettbewerb können im Einzelfall anders gewertet werden – im Zweifel mit dem Betreuer klären.</p>
+      </div>
+    </section>
+
+    <!-- ============ KARTEIKASTEN ============ -->
+    <section class="view" data-view="lernen" aria-labelledby="learn-title" hidden>
+      <h1 class="view__title" id="learn-title">Karteikasten</h1>
+      <div id="learn-root"></div>
+    </section>
+
+    <!-- ============ TEST ============ -->
+    <section class="view" data-view="test" aria-labelledby="test-title" hidden>
+      <h1 class="view__title" id="test-title">Test</h1>
+      <div id="test-root"></div>
+    </section>
+
+    <!-- ============ ALLE FRAGEN ============ -->
+    <section class="view" data-view="fragen" aria-labelledby="cat-title" hidden>
+      <h1 class="view__title" id="cat-title">Alle Fragen</h1>
+      <div class="card filters">
+        <label class="field field--wide">
+          <span>Suchen</span>
+          <input type="search" id="cat-search" placeholder="z. B. Drohn, Oxalsäure, Wassergehalt …" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Thema</span>
+          <select id="cat-topic"></select>
+        </label>
+        <label class="field">
+          <span>Quelle</span>
+          <select id="cat-source"></select>
+        </label>
+        <label class="field">
+          <span>Status</span>
+          <select id="cat-status">
+            <option value="">alle</option>
+            <option value="flag">markiert</option>
+            <option value="wrong">schon mal falsch</option>
+            <option value="new">noch nie beantwortet</option>
+            <option value="b1">Fach 1</option>
+            <option value="b2">Fach 2</option>
+            <option value="b3">Fach 3</option>
+            <option value="b4">Fach 4</option>
+            <option value="b5">Fach 5</option>
+          </select>
+        </label>
+      </div>
+      <div class="catalog-bar">
+        <p class="catalog-count" id="cat-count" aria-live="polite"></p>
+        <div class="catalog-actions">
+          <button class="button button--small" type="button" id="cat-toggle">Alle Lösungen zeigen</button>
+          <button class="button button--small" type="button" id="cat-learn">Diese lernen</button>
+          <button class="button button--small button--primary" type="button" id="cat-test">Test daraus</button>
+        </div>
+      </div>
+      <div class="catalog" id="cat-list"></div>
+    </section>
+
+    <!-- ============ FORTSCHRITT ============ -->
+    <section class="view" data-view="fortschritt" aria-labelledby="prog-title" hidden>
+      <h1 class="view__title" id="prog-title">Fortschritt</h1>
+      <div id="prog-root"></div>
+      <div class="card">
+        <h2 class="card__title">Daten sichern</h2>
+        <p class="hint">Dein Fortschritt wird nur in diesem Browser auf diesem Gerät gespeichert. Mit einer Sicherungsdatei kannst du ihn auf ein anderes Gerät mitnehmen.</p>
+        <div class="row">
+          <button class="button" type="button" id="prog-export">Fortschritt herunterladen</button>
+          <label class="button">
+            Sicherung laden
+            <input type="file" id="prog-import" accept="application/json,.json" hidden>
+          </label>
+          <button class="button button--danger" type="button" id="prog-reset">Alles zurücksetzen</button>
+        </div>
+        <p class="hint" id="prog-msg" role="status"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Fragen aus den Theorietests der Bayerischen Jungimkermeisterschaften (LVBI), IMYB-Tests und ergänzende Fragen zu den Themen der Honigmacher-Kurse. Alles läuft im Browser.</p>
+      <p>Ein Projekt von <a href="https://joelterheide.github.io/">Joel ter Heide</a> · <a href="https://github.com/joelterheide/imker-trainer">Quellcode auf GitHub</a></p>
+    </div>
+  </footer>
+
+  <script src="daten/meta.js"></script>
+  <script src="daten/biologie.js"></script>
+  <script src="daten/volk.js"></script>
+  <script src="daten/praxis.js"></script>
+  <script src="daten/varroa.js"></script>
+  <script src="daten/krankheiten.js"></script>
+  <script src="daten/honig.js"></script>
+  <script src="daten/pflanzen.js"></script>
+  <script src="daten/recht.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
